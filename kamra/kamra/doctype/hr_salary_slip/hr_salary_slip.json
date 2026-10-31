@@ -1,20 +1,235 @@
 {
-    "actions": [],
-    "allow_bulk_edit": 1,
-    "allow_rename": 1,
-    "autoname": "format:SALARY-{####}",
-    "creation": "2026-10-31 20:00:00.000000",
-    "doctype": "DocType",
-    "engine": "InnoDB",
-    "field_order": ["employee", "employee_name", "payroll_period", "status"],
-    "fields": [
-        {"fieldname": "employee", "fieldtype": "Link", "label": "Employé", "options": "HR Employee", "reqd": 1},
-        {"fieldname": "employee_name", "fieldtype": "Data", "label": "Nom", "read_only": 1},
-        {"fieldname": "payroll_period", "fieldtype": "Date", "label": "Période paie", "reqd": 1},
-        {"fieldname": "status", "fieldtype": "Select", "label": "Statut", "options": "Brouillon\nCalculé\nPayé", "default": "Brouillon"}
-    ],
-    "module": "Kamra",
-    "name": "HR Salary Slip",
-    "naming_rule": "Expression",
-    "title_field": "employee"
+	"actions": [],
+	"allow_bulk_edit": 1,
+	"allow_rename": 1,
+	"autoname": "format:SALARY-{####}",
+	"creation": "2026-10-31 20:00:00.000000",
+	"doctype": "DocType",
+	"editable_grid": 1,
+	"engine": "InnoDB",
+	"field_order": [
+		"employee",
+		"employee_name",
+		"department",
+		"payroll_period",
+		"status",
+		"column_break_payment",
+		"payment_date",
+		"section_break_earnings",
+		"earnings",
+		"section_break_deductions",
+		"deductions",
+		"section_break_totals",
+		"gross_salary",
+		"overtime_hours",
+		"overtime_amount",
+		"days_worked",
+		"total_deductions",
+		"net_salary",
+		"column_break_cotisations",
+		"cnss_employee",
+		"cnas_employee",
+		"irg",
+		"cnss_employer",
+		"cnas_employer",
+		"total_employer_cost"
+	],
+	"fields": [
+		{
+			"fieldname": "employee",
+			"fieldtype": "Link",
+			"in_list_view": 1,
+			"in_standard_filter": 1,
+			"label": "Employé",
+			"options": "HR Employee",
+			"reqd": 1
+		},
+		{
+			"fieldname": "employee_name",
+			"fieldtype": "Data",
+			"in_list_view": 1,
+			"label": "Nom",
+			"read_only": 1
+		},
+		{
+			"fieldname": "department",
+			"fieldtype": "Link",
+			"fetch_from": "employee.department",
+			"in_standard_filter": 1,
+			"label": "Département",
+			"options": "Department",
+			"read_only": 1
+		},
+		{
+			"fieldname": "payroll_period",
+			"fieldtype": "Date",
+			"in_list_view": 1,
+			"in_standard_filter": 1,
+			"label": "Période de paie",
+			"reqd": 1
+		},
+		{
+			"default": "Brouillon",
+			"fieldname": "status",
+			"fieldtype": "Select",
+			"in_list_view": 1,
+			"in_standard_filter": 1,
+			"label": "Statut",
+			"options": "Brouillon\nCalculé\nVérifié\nPayé"
+		},
+		{
+			"fieldname": "column_break_payment",
+			"fieldtype": "Column Break"
+		},
+		{
+			"fieldname": "payment_date",
+			"fieldtype": "Date",
+			"label": "Date de paiement",
+			"read_only": 1
+		},
+		{
+			"fieldname": "section_break_earnings",
+			"fieldtype": "Section Break",
+			"label": "Gains"
+		},
+		{
+			"fieldname": "earnings",
+			"fieldtype": "Table",
+			"label": "Gains",
+			"options": "HR Salary Slip Component",
+			"read_only": 1
+		},
+		{
+			"fieldname": "section_break_deductions",
+			"fieldtype": "Section Break",
+			"label": "Retenues"
+		},
+		{
+			"fieldname": "deductions",
+			"fieldtype": "Table",
+			"label": "Retenues",
+			"options": "HR Salary Slip Component",
+			"read_only": 1
+		},
+		{
+			"fieldname": "section_break_totals",
+			"fieldtype": "Section Break",
+			"label": "Totaux"
+		},
+		{
+			"fieldname": "gross_salary",
+			"fieldtype": "Currency",
+			"in_list_view": 1,
+			"label": "Salaire brut",
+			"read_only": 1
+		},
+		{
+			"fieldname": "overtime_hours",
+			"fieldtype": "Float",
+			"label": "Heures supplémentaires",
+			"read_only": 1
+		},
+		{
+			"fieldname": "overtime_amount",
+			"fieldtype": "Currency",
+			"label": "Montant heures sup",
+			"read_only": 1
+		},
+		{
+			"fieldname": "days_worked",
+			"fieldtype": "Float",
+			"label": "Jours travaillés",
+			"read_only": 1
+		},
+		{
+			"fieldname": "total_deductions",
+			"fieldtype": "Currency",
+			"label": "Total retenues",
+			"read_only": 1
+		},
+		{
+			"fieldname": "net_salary",
+			"fieldtype": "Currency",
+			"in_list_view": 1,
+			"label": "Net à payer",
+			"read_only": 1
+		},
+		{
+			"fieldname": "column_break_cotisations",
+			"fieldtype": "Column Break"
+		},
+		{
+			"fieldname": "cnss_employee",
+			"fieldtype": "Currency",
+			"label": "CNSS salarial",
+			"read_only": 1
+		},
+		{
+			"fieldname": "cnas_employee",
+			"fieldtype": "Currency",
+			"label": "CNAS salarial",
+			"read_only": 1
+		},
+		{
+			"fieldname": "irg",
+			"fieldtype": "Currency",
+			"label": "IRG",
+			"read_only": 1
+		},
+		{
+			"fieldname": "cnss_employer",
+			"fieldtype": "Currency",
+			"label": "CNSS patronal",
+			"read_only": 1
+		},
+		{
+			"fieldname": "cnas_employer",
+			"fieldtype": "Currency",
+			"label": "CNAS patronal",
+			"read_only": 1
+		},
+		{
+			"fieldname": "total_employer_cost",
+			"fieldtype": "Currency",
+			"label": "Coût total employeur",
+			"read_only": 1
+		}
+	],
+	"index_web_pages_for_search": 1,
+	"links": [],
+	"modified": "2026-10-31 23:30:00.000000",
+	"modified_by": "Administrator",
+	"module": "Kamra",
+	"name": "HR Salary Slip",
+	"owner": "Administrator",
+	"permissions": [
+		{
+			"create": 1,
+			"delete": 1,
+			"email": 1,
+			"export": 1,
+			"print": 1,
+			"read": 1,
+			"role": "HR Manager",
+			"share": 1,
+			"write": 1
+		},
+		{
+			"create": 1,
+			"export": 1,
+			"print": 1,
+			"read": 1,
+			"role": "HR Payroll Officer",
+			"write": 1
+		},
+		{
+			"print": 1,
+			"read": 1,
+			"role": "HR User"
+		}
+	],
+	"search_fields": "employee,employee_name,payroll_period",
+	"sort_field": "modified",
+	"sort_order": "DESC",
+	"title_field": "employee"
 }

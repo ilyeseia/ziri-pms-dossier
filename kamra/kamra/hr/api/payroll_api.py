@@ -13,6 +13,14 @@ from decimal import Decimal
 from typing import Any, Dict, List
 
 
+def _period_start(period):
+	"""Retourne le premier jour de la période (YYYY-MM -> YYYY-MM-01)."""
+	period = str(period)
+	if len(period) == 7:
+		return f"{period}-01"
+	return getdate(period)
+
+
 @frappe.whitelist()
 def generate_payslip(
     employee: str,
@@ -55,35 +63,48 @@ def create_salary_slips(period: str, department: str = None) -> Dict[str, Any]:
     if department:
         filters["department"] = department
     
-    employees = frappe.get_all("HR Employee", filters=filters, fields=["name", "salary_gross", "salary_base"])
-    
+    employees = frappe.get_all("HR Employee", filters=filters, fields=["name", "department", "salary_gross", "salary_base"])
+
+    period_start = _period_start(period)
     created = 0
     errors = []
-    
+
     for emp in employees:
         try:
             gross = float(emp.salary_gross or emp.salary_base or 0)
             if gross <= 0:
                 errors.append(f"{emp.name}: Salaire non défini")
                 continue
-            
+
             # Vérifier si existe déjà
             existing = frappe.db.exists("HR Salary Slip", {
                 "employee": emp.name,
-                "payroll_period": getdate(period)
+                "payroll_period": period_start
             })
             if existing:
                 errors.append(f"{emp.name}: Bulletin existe déjà")
                 continue
-            
+
             result = generate_payslip(emp.name, period, gross)
-            
+
+            earnings = [
+                {"component": e.get("label") or e.get("code"), "amount": flt(e.get("amount")), "is_earning": 1}
+                for e in result.get("earnings_detail", [])
+                if flt(e.get("amount"))
+            ]
+            deductions = [
+                {"component": d.get("label") or d.get("code"), "amount": flt(d.get("amount")), "is_earning": 0}
+                for d in result.get("deductions_detail", [])
+                if flt(d.get("amount"))
+            ]
+
             # Créer document
             slip = frappe.get_doc({
                 "doctype": "HR Salary Slip",
                 "employee": emp.name,
                 "employee_name": result.get('employee_name'),
-                "payroll_period": getdate(period),
+                "department": emp.department,
+                "payroll_period": period_start,
                 "gross_salary": result['gross_salary'],
                 "cnss_employee": result['cnss_employee'],
                 "cnas_employee": result['cnas_employee'],
@@ -94,6 +115,10 @@ def create_salary_slips(period: str, department: str = None) -> Dict[str, Any]:
                 "total_employer_cost": result['total_employer_cost'],
                 "days_worked": result['working_days'],
                 "overtime_hours": result['overtime_hours'],
+                "overtime_amount": result['overtime_amount'],
+                "total_deductions": flt(result['gross_salary']) - flt(result['net_salary']),
+                "earnings": earnings,
+                "deductions": deductions,
                 "status": "Calculé"
             })
             slip.insert(ignore_permissions=True)
@@ -128,7 +153,7 @@ def get_payslip(payslip_id: str) -> Dict[str, Any]:
 @frappe.whitelist()
 def get_payroll_summary(period: str, department: str = None) -> Dict[str, Any]:
     """Résumé paie pour période"""
-    filters = {"payroll_period": getdate(period)}
+    filters = {"payroll_period": _period_start(period)}
     if department:
         filters["department"] = department
     
@@ -165,7 +190,7 @@ def get_payroll_summary(period: str, department: str = None) -> Dict[str, Any]:
 def submit_payroll(period: str) -> Dict[str, Any]:
     """Valider et soumettre la paie (HR Manager)"""
     slips = frappe.get_all("HR Salary Slip", filters={
-        "payroll_period": getdate(period),
+        "payroll_period": _period_start(period),
         "status": "Calculé"
     }, fields=["name"])
     
@@ -183,7 +208,7 @@ def submit_payroll(period: str) -> Dict[str, Any]:
 def approve_payroll(period: str) -> Dict[str, Any]:
     """Approuver paie pour paiement"""
     slips = frappe.get_all("HR Salary Slip", filters={
-        "payroll_period": getdate(period),
+        "payroll_period": _period_start(period),
         "status": "Vérifié"
     }, fields=["name"])
     
@@ -203,20 +228,27 @@ def export_cnss_declaration(period: str) -> Dict[str, Any]:
     """Export déclaration CNSS mensuelle"""
     from frappe.utils import get_first_day, get_last_day
     
-    start = get_first_day(getdate(period))
+    start = _period_start(period)
     end = get_last_day(start)
-    
+
     # Employés avec salaire brut
     employees = frappe.get_all("HR Salary Slip", filters={
-        "payroll_period": getdate(period),
+        "payroll_period": start,
         "status": ["in", ["Calculé", "Vérifié", "Payé"]]
-    }, fields=["employee", "employee_name", "gross_salary", "cnss_employee", "cnss_employer"])
-    
+    }, fields=["employee", "employee_name", "gross_salary", "cnss_employee", "cnss_employer", "days_worked"])
+
+    employer_id = "A_COMPLETER"
+    try:
+        if frappe.db.exists("DocType", "Company") and frappe.get_meta("Company").has_field("cnss_number"):
+            employer_id = frappe.db.get_single_value("Company", "cnss_number") or "A_COMPLETER"
+    except Exception:
+        pass
+
     # Format CNSS (exemple format standard)
     declaration = {
         "period": period,
         "declaration_date": nowdate(),
-        "employer_id": frappe.db.get_single_value("Company", "cnss_number") or "A_COMPLETER",
+        "employer_id": employer_id,
         "employees": []
     }
     
@@ -229,15 +261,15 @@ def export_cnss_declaration(period: str) -> Dict[str, Any]:
             "gross_salary": flt(e.gross_salary),
             "cnss_employee": flt(e.cnss_employee),
             "cnss_employer": flt(e.cnss_employer),
-            "days_worked": 26  # À récupérer du pointage
+            "days_worked": flt(e.days_worked) or 26
         })
-    
+
     return {
         "declaration": declaration,
         "total_employees": len(declaration["employees"]),
-        "total_gross": sum(flt(e.gross_salary) for e in declaration["employees"]),
-        "total_cnss_employee": sum(flt(e.cnss_employee) for e in declaration["employees"]),
-        "total_cnss_employer": sum(flt(e.cnss_employer) for e in declaration["employees"])
+        "total_gross": sum(flt(e["gross_salary"]) for e in declaration["employees"]),
+        "total_cnss_employee": sum(flt(e["cnss_employee"]) for e in declaration["employees"]),
+        "total_cnss_employer": sum(flt(e["cnss_employer"]) for e in declaration["employees"])
     }
 
 
