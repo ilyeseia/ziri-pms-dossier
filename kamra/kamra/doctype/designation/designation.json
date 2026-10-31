@@ -1,0 +1,66 @@
+{
+	"actions": [],
+	"autoname": "field:designation_name",
+	"creation": "2026-10-31 20:00:00.000000",
+	"doctype": "DocType",
+	"engine": "InnoDB",
+	"field_order": [
+		"designation_name",
+		"disabled",
+		"description"
+	],
+	"fields": [
+		{
+			"fieldname": "designation_name",
+			"fieldtype": "Data",
+			"in_list_view": 1,
+			"label": "Intitulé du poste",
+			"reqd": 1,
+			"unique": 1
+		},
+		{
+			"fieldname": "disabled",
+			"fieldtype": "Check",
+			"label": "Désactivé",
+			"default": "0"
+		},
+		{
+			"fieldname": "description",
+			"fieldtype": "Small Text",
+			"label": "Description"
+		}
+	],
+	"index_web_pages_for_search": 1,
+	"links": [],
+	"modified": "2026-10-31 20:00:00.000000",
+	"modified_by": "Administrator",
+	"module": "Kamra",
+	"name": "Designation",
+	"naming_rule": "By fieldname",
+	"owner": "Administrator",
+	"permissions": [
+		{
+			"create": 1,
+			"delete": 1,
+			"email": 1,
+			"export": 1,
+			"print": 1,
+			"read": 1,
+			"role": "HR Manager",
+			"share": 1,
+			"write": 1
+		},
+		{
+			"read": 1,
+			"role": "HR Staff Officer"
+		},
+		{
+			"read": 1,
+			"role": "HR Payroll Officer"
+		}
+	],
+	"sort_field": "modified",
+	"sort_order": "DESC",
+	"title_field": "designation_name",
+	"track_changes": 1
+}

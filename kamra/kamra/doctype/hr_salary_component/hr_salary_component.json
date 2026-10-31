@@ -1,0 +1,52 @@
+{
+	"actions": [],
+	"creation": "2026-10-31 20:00:00.000000",
+	"doctype": "DocType",
+	"editable_grid": 1,
+	"engine": "InnoDB",
+	"field_order": [
+		"component",
+		"amount",
+		"condition",
+		"is_fixed"
+	],
+	"fields": [
+		{
+			"fieldname": "component",
+			"fieldtype": "Data",
+			"in_list_view": 1,
+			"label": "Rubrique",
+			"reqd": 1
+		},
+		{
+			"fieldname": "amount",
+			"fieldtype": "Currency",
+			"in_list_view": 1,
+			"label": "Montant / Formule",
+			"reqd": 1
+		},
+		{
+			"fieldname": "condition",
+			"fieldtype": "Code",
+			"label": "Condition (Python)",
+			"options": "python"
+		},
+		{
+			"fieldname": "is_fixed",
+			"fieldtype": "Check",
+			"label": "Fixe",
+			"default": "1"
+		}
+	],
+	"index_web_pages_for_search": 1,
+	"istable": 1,
+	"links": [],
+	"modified": "2026-10-31 20:00:00.000000",
+	"modified_by": "Administrator",
+	"module": "Kamra",
+	"name": "HR Salary Component",
+	"owner": "Administrator",
+	"permissions": [],
+	"sort_field": "modified",
+	"sort_order": "DESC"
+}
