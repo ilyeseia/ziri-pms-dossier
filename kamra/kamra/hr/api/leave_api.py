@@ -9,6 +9,7 @@ API RH - Congés et Absences
 import frappe
 from frappe import _
 from frappe.utils import nowdate, now_datetime, getdate, date_diff
+from typing import Any, Dict, List
 
 
 @frappe.whitelist()

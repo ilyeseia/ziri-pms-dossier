@@ -9,6 +9,7 @@ API RH - Employés
 import frappe
 from frappe import _
 from frappe.utils import nowdate, add_days, get_first_day, get_last_day
+from typing import Any, Dict, List
 
 
 @frappe.whitelist()

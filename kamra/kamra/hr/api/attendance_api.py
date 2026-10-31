@@ -9,6 +9,7 @@ API RH - Pointage et Présences
 import frappe
 from frappe import _
 from frappe.utils import nowdate, getdate, get_first_day, get_last_day, add_days
+from typing import Any, Dict, List
 
 
 @frappe.whitelist()
@@ -136,7 +137,7 @@ def validate_attendance(attendance_id: str, validator: str = None) -> Dict[str, 
 @frappe.whitelist()
 def get_anomalies_summary(date: str = None) -> Dict[str, Any]:
     """Résumé anomalies pour une date"""
-    from hr.attendance.processor import AnomalyDetector
+    from kamra.kamra.hr.attendance.processor import AnomalyDetector
     return AnomalyDetector.scan_daily(date)
 
 
@@ -144,7 +145,7 @@ def get_anomalies_summary(date: str = None) -> Dict[str, Any]:
 def get_monthly_attendance_summary(month: int, year: int, department: str = None) -> Dict[str, Any]:
     """Résumé mensuel complet pour paie"""
     from frappe.utils import get_first_day, get_last_day
-    from hr.attendance.processor import AnomalyDetector
+    from kamra.kamra.hr.attendance.processor import AnomalyDetector
     
     return AnomalyDetector.scan_monthly(month, year)
 
@@ -152,7 +153,7 @@ def get_monthly_attendance_summary(month: int, year: int, department: str = None
 @frappe.whitelist()
 def import_attendance(file_url: str, device_type: str = 'Biométrique') -> Dict[str, Any]:
     """Importer fichier pointage"""
-    from hr.attendance.processor import import_attendance_file
+    from kamra.kamra.hr.attendance.processor import import_attendance_file
     return import_attendance_file(file_url, device_type)
 
 

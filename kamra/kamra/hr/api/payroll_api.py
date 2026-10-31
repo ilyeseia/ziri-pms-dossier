@@ -10,6 +10,7 @@ import frappe
 from frappe import _
 from frappe.utils import nowdate, getdate, get_first_day, get_last_day, flt
 from decimal import Decimal
+from typing import Any, Dict, List
 
 
 @frappe.whitelist()
@@ -21,7 +22,7 @@ def generate_payslip(
     overtime_rate_type: str = 'jour'
 ) -> Dict[str, Any]:
     """Générer un bulletin de paie"""
-    from hr.payroll.algeria_payroll import generate_payslip as compute_payslip
+    from kamra.kamra.hr.payroll.algeria_payroll import generate_payslip as compute_payslip
     
     if gross_salary is None:
         emp = frappe.get_doc("HR Employee", employee)
@@ -31,7 +32,7 @@ def generate_payslip(
     
     # Récupérer heures sup réelles
     if overtime_hours == 0:
-        from hr.payroll.algeria_payroll import get_monthly_overtime
+        from kamra.kamra.hr.payroll.algeria_payroll import get_monthly_overtime
         overtime_hours = float(get_monthly_overtime(employee, period))
     
     return compute_payslip(employee, period, gross_salary, overtime_hours, overtime_rate_type)
@@ -43,7 +44,7 @@ def batch_generate_payroll(
     period: str
 ) -> List[Dict[str, Any]]:
     """Générer paie pour plusieurs employés"""
-    from hr.payroll.algeria_payroll import batch_generate_payroll as compute_batch
+    from kamra.kamra.hr.payroll.algeria_payroll import batch_generate_payroll as compute_batch
     return compute_batch(employees, period)
 
 
@@ -265,7 +266,7 @@ def get_employee_payslips(employee: str, year: int = None) -> List[Dict]:
 @frappe.whitelist()
 def calculate_annual_cost(employee: str) -> Dict[str, Any]:
     """Coût annuel complet employé"""
-    from hr.payroll.algeria_payroll import compute_payslip
+    from kamra.kamra.hr.payroll.algeria_payroll import compute_payslip
     
     emp = frappe.get_doc("HR Employee", employee)
     gross = float(emp.salary_gross or emp.salary_base or 0)

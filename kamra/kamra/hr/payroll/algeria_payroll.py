@@ -269,7 +269,7 @@ def compute_payslip(
     
     return PayrollResult(
         employee=employee,
-        employee_name=emp.employee_name,
+        employee_name=getattr(emp, "employee_name", None) or f"{emp.first_name or ''} {emp.last_name or ''}".strip(),
         period=period,
         gross_salary=total_earnings,
         total_earnings=total_earnings,
