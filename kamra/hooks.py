@@ -1,0 +1,420 @@
+app_name = "kamra"
+app_title = "Kamra"
+app_publisher = "HeyKoala"
+app_description = (
+	"Open-source, AI-native hotel PMS — front desk, direct booking, "
+	"housekeeping, folios and GST billing, with an MCP tool layer so AI "
+	"agents can run the property."
+)
+app_email = "hello@kamrapms.com"
+app_license = "agpl-3.0"
+
+# Branding shown in the Desk navbar, app switcher and marketplace listing.
+app_logo_url = "/assets/kamra/kamra-mark.svg"
+app_icon = "octicon octicon-home"
+app_color = "#1E7B4F"
+
+# The product UI is the React SPA at /kamra; surface it in the Apps launcher
+# (and the /apps grid) so users land on it instead of the Desk.
+add_to_apps_screen = [
+	{
+		"name": "kamra",
+		"logo": "/assets/kamra/kamra-mark.svg",
+		"title": "Kamra",
+		"route": "/kamra",
+	}
+]
+
+# Automated end-of-day: post room charges, flag no-shows, per property.
+scheduler_events = {
+	"cron": {
+		"0 * * * *": ["kamra.channel_manager.push_all_ari"],
+		# 03:00 site time, daily - the night audit closes the day
+		"0 3 * * *": ["kamra.folio.nightly_audit_all_properties"],
+		# 09:00 - send self check-in links to upcoming arrivals, for properties
+		# that turned the setting on (a plain automation, not an agent)
+		"0 9 * * *": ["kamra.prearrival.run_prearrival_outreach"],
+		# every 15 min - escalate overdue housekeeping tasks up the ladder;
+		# also release expired Held / Pending Payment reservations (ADR-006)
+		# and, past the property's release time, today's non-guaranteed
+		# arrivals (no-show policy, off unless a release time is set)
+		"*/15 * * * *": [
+			"kamra.housekeeping.escalate_overdue_tasks",
+			"kamra.reservation_state.expire_holds",
+			# group blocks past their cutoff give unpicked rooms back to sale
+			"kamra.group_blocks.release_expired_blocks",
+			"kamra.no_show.release_non_guaranteed_arrivals",
+		],
+		# 08:30 - the banquet team's morning list: follow-ups gone quiet,
+		# tentative holds about to lapse, payments due, event orders missing
+		"30 8 * * *": ["kamra.banquet.run_banquet_reminders"],
+		# 04:15 - wipe the public demo so it cannot be used as a live PMS
+		# (no-op unless kamra_demo_mode is on and the site is a playground)
+		"15 4 * * *": ["kamra.scripts.reset_demo.scheduled"],
+		# 03:30 - storage limitation (DPDP s.8(7)): erase guests idle past
+		# their property's retention period
+		"30 3 * * *": ["kamra.privacy.apply_retention"],
+		# 03:40 - the same for conversations: WhatsApp message text and AI
+		# assistant chats past the property's message retention period
+		"40 3 * * *": ["kamra.privacy.apply_message_retention"],
+		# 03:50 - finished kitchen print jobs (guest names on the ticket)
+		# are kept a week for reprints, then dropped
+		"50 3 * * *": ["kamra.printing.purge_old_jobs"],
+		# 04:45 - drop old kamrapms.com Hosting Enquiry leads (default 24 months;
+		# Won / converted stays; site_config hosting_enquiry_retention_months)
+		"45 4 * * *": ["kamra.hosting_enquiry_retention.purge_expired_hosting_enquiries"],
+		# 06:00 and 18:00 - warm the GitHub latest-release cache for the update nag
+		"0 6,18 * * *": ["kamra.health.poll_github_releases"],
+		# every minute - outbound webhook retries that are due (backoff)
+		"* * * * *": ["kamra.webhooks.retry_due"],
+	},
+}
+
+# DPDP Rules: keep logs of access to personal data for at least one year
+# (Frappe's own defaults are 30 and 90 days).
+default_log_clearing_doctypes = {
+	"Access Log": [365],
+	"Activity Log": [365],
+}
+
+# Apps
+# ------------------
+
+required_apps = ["payments"]
+
+# Localization packs by country (regional_overrides style). A future
+# kamra_uae APP declares its own to claim "United Arab Emirates".
+kamra_localization = {
+	"India": "kamra.localization.india",
+	"Indonesia": "kamra.localization.indonesia",
+	"Thailand": "kamra.localization.thailand",
+	"Malaysia": "kamra.localization.malaysia",
+	"United Arab Emirates": "kamra.localization.uae",
+	"Saudi Arabia": "kamra.localization.saudi",
+}
+
+# Served single-page app
+# -----------------------
+# The React front-end mounts at /kamra and owns all client-side routes
+# (front desk, booking engine, housekeeping, self check-in). The `kamra` www
+# page (kamra/www/kamra.py) serves the built shell with the CSRF token
+# injected; every deep link falls through to it so browser refresh works.
+website_route_rules = [
+	{"from_route": "/kamra/<path:app_path>", "to_route": "kamra"},
+]
+
+# Clean, shareable guest URLs redirect into the SPA's routes.
+website_redirects = [
+	{"source": r"/book$", "target": "/kamra/book"},
+	{"source": r"/book/(.*)", "target": r"/kamra/book/\1"},
+	{"source": r"/stay$", "target": "/kamra/stay"},
+	{"source": r"/stay/(.*)", "target": r"/kamra/stay/\1"},
+	{"source": r"/hk$", "target": "/kamra/hk"},
+	{"source": r"/checkin/(.*)", "target": r"/kamra/checkin/\1"},
+]
+
+# Each item in the list will be shown as an app in the apps page
+# add_to_apps_screen = [
+# 	{
+# 		"name": "kamra",
+# 		"logo": "/assets/kamra/logo.png",
+# 		"title": "Kamra",
+# 		"route": "/kamra",
+# 		"has_permission": "kamra.api.permission.has_app_permission"
+# 	}
+# ]
+
+# Includes in <head>
+# ------------------
+
+# include js, css files in header of desk.html
+# app_include_css = "/assets/kamra/css/kamra.css"
+# app_include_js = "/assets/kamra/js/kamra.js"
+
+# include js, css files in header of web template
+# web_include_css = "/assets/kamra/css/kamra.css"
+# web_include_js = "/assets/kamra/js/kamra.js"
+
+# include custom scss in every website theme (without file extension ".scss")
+# website_theme_scss = "kamra/public/scss/website"
+
+# include js, css files in header of web form
+# webform_include_js = {"doctype": "public/js/doctype.js"}
+# webform_include_css = {"doctype": "public/css/doctype.css"}
+
+# include js in page
+# page_js = {"page" : "public/js/file.js"}
+
+# include js in doctype views
+# doctype_js = {"doctype" : "public/js/doctype.js"}
+# doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
+# doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
+# doctype_calendar_js = {"doctype" : "public/js/doctype_calendar.js"}
+
+# Svg Icons
+# ------------------
+# include app icons in desk
+# app_include_icons = "kamra/public/icons.svg"
+
+# Home Pages
+# ----------
+
+# application home page (will override Website Settings)
+# home_page = "login"
+
+# website user home page (by Role)
+# role_home_page = {
+# 	"Role": "home_page"
+# }
+
+# Generators
+# ----------
+
+# automatically create page for each record of this doctype
+# website_generators = ["Web Page"]
+
+# automatically load and sync documents of this doctype from downstream apps
+# importable_doctypes = [doctype_1]
+
+# Jinja
+# ----------
+
+# add methods and filters to jinja environment
+# jinja = {
+# 	"methods": "kamra.utils.jinja_methods",
+# 	"filters": "kamra.utils.jinja_filters"
+# }
+
+# Installation
+# ------------
+
+# before_install = "kamra.install.before_install"
+after_install = "kamra.install.after_install"
+after_migrate = ["kamra.install.after_migrate"]
+
+# Uninstallation
+# ------------
+
+# before_uninstall = "kamra.uninstall.before_uninstall"
+# after_uninstall = "kamra.uninstall.after_uninstall"
+
+# Integration Setup
+# ------------------
+# To set up dependencies/integrations with other apps
+# Name of the app being installed is passed as an argument
+
+# before_app_install = "kamra.utils.before_app_install"
+# after_app_install = "kamra.utils.after_app_install"
+
+# Integration Cleanup
+# -------------------
+# To clean up dependencies/integrations with other apps
+# Name of the app being uninstalled is passed as an argument
+
+# before_app_uninstall = "kamra.utils.before_app_uninstall"
+# after_app_uninstall = "kamra.utils.after_app_uninstall"
+
+# Build
+# ------------------
+# To hook into the build process
+
+# after_build = "kamra.build.after_build"
+
+# Desk Notifications
+# ------------------
+# See frappe.core.notifications.get_notification_config
+
+# notification_config = "kamra.notifications.get_notification_config"
+
+# Permissions
+# -----------
+# Permissions evaluated in scripted ways
+
+# Guest has no property link, so Property User Permissions can't limit it;
+# these apply Kamra's stay-history rule to Frappe's own REST, Desk and
+# private file downloads too (see kamra.authz.guest_query_conditions).
+# Every Kamra DocType linking a Property fails closed under the opt-in
+# kamra_strict_property_scope site setting; with it off these add nothing.
+_PROPERTY_SCOPED = (
+	"Agent Action Log", "AI Assistant Settings", "Banquet Checklist Template",
+	"Banquet Dish", "Banquet Function Task", "Banquet Menu",
+	"Banquet Service Item", "Cancelled Invoice", "Cash Transfer", "Cashier", "Cashier Session", "Cashier Terminal",
+	"Cashier Transaction", "Channel Manager Connection",
+	"Channel Provider Connection", "City Ledger Account", "City Ledger Entry",
+	"Copilot Conversation", "Credit Note", "Discount Voucher", "Exchange Rate",
+	"Exchange Transaction", "Experience", "External POS Charge", "Folio", "Folio Ledger Entry",
+	"Folio Reprint", "Group Booking", "Housekeeping Task", "Hurdle Rate",
+	"Ingredient", "Ingredient Ledger Entry", "Ingredient Stock", "Kitchen Printer",
+	"Laundry Order", "Laundry Rate", "Lost And Found Item", "MCP OAuth Grant",
+	"Meal Plan", "Menu Item", "Night Audit Run", "Outbound Webhook",
+	"Outbound Webhook Delivery", "Payment Gateway Settings",
+	"Petty Cash Voucher", "POS Order", "POS Outlet", "POS Table Reservation",
+	"Print Job",
+	"Proforma Folio", "Property Setting", "Rate Guardrail", "Rate Plan",
+	"Reservation",
+	"Revenue Budget", "Room", "Room Block", "Room Type", "Season",
+	"Security Deposit", "Sellable Unit", "Service Ticket", "Shift Handover", "SOP Template", "Ticket Event",
+	"Transaction Code", "Turnover Profile", "Venue", "Venue Booking",
+	"WhatsApp Message", "ZATCA Invoice", "ZATCA Settings",
+)
+
+permission_query_conditions = {
+	"Guest": "kamra.authz.guest_query_conditions",
+	**{dt: "kamra.authz.property_query_conditions" for dt in _PROPERTY_SCOPED},
+}
+
+has_permission = {
+	"Guest": "kamra.authz.guest_has_permission",
+	**{dt: "kamra.authz.property_has_permission" for dt in _PROPERTY_SCOPED},
+}
+
+# Document Events
+# ---------------
+# Hook on document methods and events
+
+doc_events = {
+	doctype: {
+		"on_update": "kamra.realtime.notify",
+		"after_insert": "kamra.realtime.notify",
+		"on_trash": "kamra.realtime.notify",
+	}
+	for doctype in ("Reservation", "Folio", "Room", "Housekeeping Task",
+	                "Venue Booking", "Group Booking", "POS Order",
+	                "Service Ticket", "Agent Action Log")
+}
+
+# A reservation booked/modified/cancelled moves availability, so fan the new
+# numbers out to the channel manager (Pipeline 1). Runs alongside the realtime
+# notify; best-effort and after-commit so it never affects the booking itself.
+# The same changes are offered to integrators as outbound webhooks
+# (reservation.*, guest.checked_in/out): queued in the transaction, sent
+# after commit (kamra.webhooks).
+doc_events["Reservation"] = {
+	"after_insert": ["kamra.realtime.notify",
+	                 "kamra.channel_manager.on_reservation_change",
+	                 "kamra.webhooks.on_reservation_insert"],
+	"on_update": ["kamra.realtime.notify",
+	              "kamra.channel_manager.on_reservation_change",
+	              "kamra.webhooks.on_reservation_update"],
+	"on_trash": "kamra.realtime.notify",
+}
+
+# Scheduled Tasks
+# ---------------
+
+# scheduler_events = {
+# 	"all": [
+# 		"kamra.tasks.all"
+# 	],
+# 	"daily": [
+# 		"kamra.tasks.daily"
+# 	],
+# 	"hourly": [
+# 		"kamra.tasks.hourly"
+# 	],
+# 	"weekly": [
+# 		"kamra.tasks.weekly"
+# 	],
+# 	"monthly": [
+# 		"kamra.tasks.monthly"
+# 	],
+# }
+
+# Testing
+# -------
+
+# before_tests = "kamra.install.before_tests"
+
+# Extend DocType Class
+# ------------------------------
+#
+# Specify custom mixins to extend the standard doctype controller.
+# extend_doctype_class = {
+# 	"Task": "kamra.custom.task.CustomTaskMixin"
+# }
+
+# Overriding Methods
+# ------------------------------
+#
+# override_whitelisted_methods = {
+# 	"frappe.desk.doctype.event.event.get_events": "kamra.event.get_events"
+# }
+#
+# each overriding function accepts a `data` argument;
+# generated from the base implementation of the doctype dashboard,
+# along with any modifications made in other Frappe apps
+# override_doctype_dashboards = {
+# 	"Task": "kamra.task.get_dashboard_data"
+# }
+
+# exempt linked doctypes from being automatically cancelled
+#
+# auto_cancel_exempted_doctypes = ["Auto Repeat"]
+
+# Ignore links to specified DocTypes when deleting documents
+# -----------------------------------------------------------
+
+# ignore_links_on_delete = ["Communication", "ToDo"]
+
+# Door lock connectors (kamra.door_lock). A vendor app adds its own:
+# kamra_door_lock_adapters = {"acme": "acme_kamra.locks.AcmeAdapter"}
+kamra_door_lock_adapters = {"manual": "kamra.door_lock.ManualAdapter"}
+
+# Remote MCP + OAuth live at /mcp and /mcp/oauth/* (not the SPA).
+page_renderer = ["kamra.mcp_http.MCPPageRenderer"]
+
+# Request Events
+# ----------------
+# Preserve AioSell's Basic-auth header for the channel webhook before Frappe's
+# own api-key auth rejects it (see kamra.channels.aiosell.preserve_webhook_auth).
+before_request = ["kamra.channels.aiosell.preserve_webhook_auth"]
+# after_request = ["kamra.utils.after_request"]
+
+# Job Events
+# ----------
+# before_job = ["kamra.utils.before_job"]
+# after_job = ["kamra.utils.after_job"]
+
+# User Data Protection
+# --------------------
+
+# user_data_fields = [
+# 	{
+# 		"doctype": "{doctype_1}",
+# 		"filter_by": "{filter_by}",
+# 		"redact_fields": ["{field_1}", "{field_2}"],
+# 		"partial": 1,
+# 	},
+# 	{
+# 		"doctype": "{doctype_2}",
+# 		"filter_by": "{filter_by}",
+# 		"partial": 1,
+# 	},
+# 	{
+# 		"doctype": "{doctype_3}",
+# 		"strict": False,
+# 	},
+# 	{
+# 		"doctype": "{doctype_4}"
+# 	}
+# ]
+
+# Authentication and authorization
+# --------------------------------
+
+# auth_hooks = [
+# 	"kamra.auth.validate"
+# ]
+
+# Automatically update python controller files with type annotations for this app.
+# export_python_type_annotations = True
+
+# default_log_clearing_doctypes = {
+# 	"Logging DocType Name": 30  # days to retain logs
+# }
+
+# Translation
+# ------------
+# List of apps whose translatable strings should be excluded from this app's translations.
+# ignore_translatable_strings_from = []
+
