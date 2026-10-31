@@ -1,0 +1,258 @@
+{
+	"actions": [],
+	"allow_bulk_edit": 1,
+	"allow_rename": 1,
+	"autoname": "format:ATT-{####}",
+	"creation": "2026-10-31 20:00:00.000000",
+	"doctype": "DocType",
+	"editable_grid": 1,
+	"engine": "InnoDB",
+	"field_order": [
+		"employee",
+		"employee_name",
+		"department",
+		"attendance_date",
+		"column_break_1",
+		"shift",
+		"status",
+		"section_break_times",
+		"check_in",
+		"check_out",
+		"expected_check_in",
+		"expected_check_out",
+		"working_hours",
+		"overtime_hours",
+		"late_minutes",
+		"early_departure_minutes",
+		"section_break_device",
+		"device_id",
+		"device_type",
+		"section_break_validation",
+		"is_anomaly",
+		"anomaly_type",
+		"validated_by",
+		"validated_on",
+		"notes"
+	],
+	"fields": [
+		{
+			"fieldname": "employee",
+			"fieldtype": "Link",
+			"label": "Employé",
+			"options": "HR Employee",
+			"reqd": 1,
+			"in_list_view": 1
+		},
+		{
+			"fieldname": "employee_name",
+			"fieldtype": "Data",
+			"label": "Nom",
+			"read_only": 1,
+			"fetch_from": "employee.employee_name"
+		},
+		{
+			"fieldname": "department",
+			"fieldtype": "Link",
+			"label": "Département",
+			"options": "Department",
+			"read_only": 1,
+			"fetch_from": "employee.department"
+		},
+		{
+			"fieldname": "attendance_date",
+			"fieldtype": "Date",
+			"label": "Date",
+			"reqd": 1,
+			"in_list_view": 1
+		},
+		{
+			"fieldname": "column_break_1",
+			"fieldtype": "Column Break"
+		},
+		{
+			"fieldname": "shift",
+			"fieldtype": "Select",
+			"label": "Quart",
+			"options": "Matin\nSoir\nNuit\nContinu\nRepos",
+			"default": "Matin",
+			"in_list_view": 1
+		},
+		{
+			"fieldname": "status",
+			"fieldtype": "Select",
+			"label": "Statut",
+			"options": "Présent\nAbsent\nEn congé\nRetard\nSortie anticipée\nDemi-journée\nJour férié\nRepos",
+			"default": "Présent",
+			"in_list_view": 1
+		},
+		{
+			"fieldname": "section_break_times",
+			"fieldtype": "Section Break",
+			"label": "Horaires"
+		},
+		{
+			"fieldname": "check_in",
+			"fieldtype": "Time",
+			"label": "Arrivée réelle"
+		},
+		{
+			"fieldname": "check_out",
+			"fieldtype": "Time",
+			"label": "Départ réel"
+		},
+		{
+			"fieldname": "expected_check_in",
+			"fieldtype": "Time",
+			"label": "Arrivée théorique"
+		},
+		{
+			"fieldname": "expected_check_out",
+			"fieldtype": "Time",
+			"label": "Départ théorique"
+		},
+		{
+			"fieldname": "working_hours",
+			"fieldtype": "Float",
+			"label": "Heures travaillées",
+			"precision": 2
+		},
+		{
+			"fieldname": "overtime_hours",
+			"fieldtype": "Float",
+			"label": "Heures sup",
+			"precision": 2
+		},
+		{
+			"fieldname": "late_minutes",
+			"fieldtype": "Int",
+			"label": "Retard (min)"
+		},
+		{
+			"fieldname": "early_departure_minutes",
+			"fieldtype": "Int",
+			"label": "Sortie anticipée (min)"
+		},
+		{
+			"fieldname": "section_break_device",
+			"fieldtype": "Section Break",
+			"label": "Terminal"
+		},
+		{
+			"fieldname": "device_id",
+			"fieldtype": "Data",
+			"label": "ID Terminal"
+		},
+		{
+			"fieldname": "device_type",
+			"fieldtype": "Select",
+			"label": "Type terminal",
+			"options": "Biométrique\nBadge RFID\nApplication Mobile\nManuel"
+		},
+		{
+			"fieldname": "section_break_validation",
+			"fieldtype": "Section Break",
+			"label": "Validation"
+		},
+		{
+			"fieldname": "is_anomaly",
+			"fieldtype": "Check",
+			"label": "Anomalie détectée",
+			"read_only": 1
+		},
+		{
+			"fieldname": "anomaly_type",
+			"fieldtype": "Select",
+			"label": "Type anomalie",
+			"options": "Absence non justifiée\nRetard excessif\nSortie anticipée\nDouble badgeage\nBadgeage manquant\nHoraires incohérents",
+			"depends_on": "eval:doc.is_anomaly"
+		},
+		{
+			"fieldname": "validated_by",
+			"fieldtype": "Link",
+			"label": "Validé par",
+			"options": "User",
+			"read_only": 1
+		},
+		{
+			"fieldname": "validated_on",
+			"fieldtype": "Datetime",
+			"label": "Validé le",
+			"read_only": 1
+		},
+		{
+			"fieldname": "notes",
+			"fieldtype": "Text",
+			"label": "Notes"
+		}
+	],
+	"index_web_pages_for_search": 1,
+	"links": [],
+	"modified": "2026-10-31 20:00:00.000000",
+	"modified_by": "Administrator",
+	"module": "Kamra",
+	"name": "HR Attendance",
+	"naming_rule": "Expression",
+	"owner": "Administrator",
+	"permissions": [
+		{
+			"create": 1,
+			"delete": 1,
+			"email": 1,
+			"export": 1,
+			"print": 1,
+			"read": 1,
+			"role": "HR Manager",
+			"share": 1,
+			"write": 1
+		},
+		{
+			"create": 1,
+			"email": 1,
+			"export": 1,
+			"print": 1,
+			"read": 1,
+			"role": "HR Staff Officer",
+			"share": 1,
+			"write": 1
+		},
+		{
+			"read": 1,
+			"role": "Department Head"
+		},
+		{
+			"read": 1,
+			"role": "Employee Self Service"
+		}
+	],
+	"quick_entry": 1,
+	"sort_field": "attendance_date",
+	"sort_order": "DESC",
+	"states": [
+		{
+			"state": "Présent",
+			"style": "Green"
+		},
+		{
+			"state": "Absent",
+			"style": "Red"
+		},
+		{
+			"state": "En congé",
+			"style": "Blue"
+		},
+		{
+			"state": "Retard",
+			"style": "Orange"
+		},
+		{
+			"state": "Sortie anticipée",
+			"style": "Yellow"
+		},
+		{
+			"state": "Anomalie",
+			"style": "Red"
+		}
+	],
+	"title_field": "employee",
+	"track_changes": 1
+}

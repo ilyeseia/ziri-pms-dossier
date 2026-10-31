@@ -1,0 +1,316 @@
+{
+	"actions": [],
+	"allow_bulk_edit": 1,
+	"allow_rename": 1,
+	"autoname": "format:EMP-{####}",
+	"creation": "2026-10-31 20:00:00.000000",
+	"doctype": "DocType",
+	"editable_grid": 1,
+	"engine": "InnoDB",
+	"field_order": [
+		"employee_id",
+		"first_name",
+		"last_name",
+		"column_break_1",
+		"email",
+		"phone",
+		"emergency_contact",
+		"emergency_phone",
+		"section_break_personal",
+		"date_of_birth",
+		"gender",
+		"nationality",
+		"id_number",
+		"cnss_number",
+		"cnas_number",
+		"section_break_professional",
+		"department",
+		"designation",
+		"employment_type",
+		"date_of_joining",
+		"date_of_leaving",
+		"status",
+		"manager",
+		"user_id",
+		"section_break_compensation",
+		"salary_base",
+		"salary_gross",
+		"salary_currency",
+		"bank_name",
+		"bank_account",
+		"bank_rib",
+		"section_break_address",
+		"address_line1",
+		"address_line2",
+		"city",
+		"state",
+		"pincode",
+		"country"
+	],
+	"fields": [
+		{
+			"fieldname": "employee_id",
+			"fieldtype": "Data",
+			"label": "Matricule",
+			"read_only": 1,
+			"in_list_view": 1,
+			"reqd": 1
+		},
+		{
+			"fieldname": "first_name",
+			"fieldtype": "Data",
+			"label": "Prénom",
+			"reqd": 1,
+			"in_list_view": 1
+		},
+		{
+			"fieldname": "last_name",
+			"fieldtype": "Data",
+			"label": "Nom",
+			"reqd": 1,
+			"in_list_view": 1
+		},
+		{
+			"fieldname": "column_break_1",
+			"fieldtype": "Column Break"
+		},
+		{
+			"fieldname": "email",
+			"fieldtype": "Data",
+			"label": "Email",
+			"options": "Email"
+		},
+		{
+			"fieldname": "phone",
+			"fieldtype": "Phone",
+			"label": "Téléphone"
+		},
+		{
+			"fieldname": "emergency_contact",
+			"fieldtype": "Data",
+			"label": "Contact urgence"
+		},
+		{
+			"fieldname": "emergency_phone",
+			"fieldtype": "Phone",
+			"label": "Téléphone urgence"
+		},
+		{
+			"fieldname": "section_break_personal",
+			"fieldtype": "Section Break",
+			"label": "Informations Personnelles"
+		},
+		{
+			"fieldname": "date_of_birth",
+			"fieldtype": "Date",
+			"label": "Date de naissance"
+		},
+		{
+			"fieldname": "gender",
+			"fieldtype": "Select",
+			"label": "Sexe",
+			"options": "M\nF"
+		},
+		{
+			"fieldname": "nationality",
+			"fieldtype": "Link",
+			"label": "Nationalité",
+			"options": "Country",
+			"default": "Algeria"
+		},
+		{
+			"fieldname": "id_number",
+			"fieldtype": "Data",
+			"label": "N° Carte Identité"
+		},
+		{
+			"fieldname": "cnss_number",
+			"fieldtype": "Data",
+			"label": "N° CNSS"
+		},
+		{
+			"fieldname": "cnas_number",
+			"fieldtype": "Data",
+			"label": "N° CNAS"
+		},
+		{
+			"fieldname": "section_break_professional",
+			"fieldtype": "Section Break",
+			"label": "Informations Professionnelles"
+		},
+		{
+			"fieldname": "department",
+			"fieldtype": "Link",
+			"label": "Département",
+			"options": "Department"
+		},
+		{
+			"fieldname": "designation",
+			"fieldtype": "Link",
+			"label": "Poste",
+			"options": "Designation"
+		},
+		{
+			"fieldname": "employment_type",
+			"fieldtype": "Select",
+			"label": "Type contrat",
+			"options": "CDI\nCDD\nSaisonnier\nStage\nIntérim",
+			"default": "CDI",
+			"reqd": 1
+		},
+		{
+			"fieldname": "date_of_joining",
+			"fieldtype": "Date",
+			"label": "Date entrée",
+			"reqd": 1
+		},
+		{
+			"fieldname": "date_of_leaving",
+			"fieldtype": "Date",
+			"label": "Date sortie"
+		},
+		{
+			"fieldname": "status",
+			"fieldtype": "Select",
+			"label": "Statut",
+			"options": "Actif\nEn congé\nSuspendu\nDémissionné\nLicencié\nRetraité",
+			"default": "Actif",
+			"in_list_view": 1
+		},
+		{
+			"fieldname": "manager",
+			"fieldtype": "Link",
+			"label": "Manager",
+			"options": "HR Employee"
+		},
+		{
+			"fieldname": "user_id",
+			"fieldtype": "Link",
+			"label": "Utilisateur système",
+			"options": "User"
+		},
+		{
+			"fieldname": "section_break_compensation",
+			"fieldtype": "Section Break",
+			"label": "Rémunération"
+		},
+		{
+			"fieldname": "salary_base",
+			"fieldtype": "Currency",
+			"label": "Salaire de base",
+			"options": "currency"
+		},
+		{
+			"fieldname": "salary_gross",
+			"fieldtype": "Currency",
+			"label": "Salaire brut",
+			"options": "currency"
+		},
+		{
+			"fieldname": "salary_currency",
+			"fieldtype": "Link",
+			"label": "Devise",
+			"options": "Currency",
+			"default": "DZD"
+		},
+		{
+			"fieldname": "bank_name",
+			"fieldtype": "Data",
+			"label": "Banque"
+		},
+		{
+			"fieldname": "bank_account",
+			"fieldtype": "Data",
+			"label": "N° Compte"
+		},
+		{
+			"fieldname": "bank_rib",
+			"fieldtype": "Data",
+			"label": "RIB"
+		},
+		{
+			"fieldname": "section_break_address",
+			"fieldtype": "Section Break",
+			"label": "Adresse"
+		},
+		{
+			"fieldname": "address_line1",
+			"fieldtype": "Data",
+			"label": "Adresse ligne 1"
+		},
+		{
+			"fieldname": "address_line2",
+			"fieldtype": "Data",
+			"label": "Adresse ligne 2"
+		},
+		{
+			"fieldname": "city",
+			"fieldtype": "Data",
+			"label": "Ville"
+		},
+		{
+			"fieldname": "state",
+			"fieldtype": "Data",
+			"label": "Wilaya"
+		},
+		{
+			"fieldname": "pincode",
+			"fieldtype": "Data",
+			"label": "Code postal"
+		},
+		{
+			"fieldname": "country",
+			"fieldtype": "Link",
+			"label": "Pays",
+			"options": "Country",
+			"default": "Algeria"
+		}
+	],
+	"index_web_pages_for_search": 1,
+	"is_published_field": "published",
+	"links": [],
+	"modified": "2026-10-31 20:00:00.000000",
+	"modified_by": "Administrator",
+	"module": "Kamra",
+	"name": "HR Employee",
+	"naming_rule": "Expression",
+	"owner": "Administrator",
+	"permissions": [
+		{
+			"create": 1,
+			"delete": 1,
+			"email": 1,
+			"export": 1,
+			"print": 1,
+			"read": 1,
+			"role": "HR Manager",
+			"share": 1,
+			"write": 1
+		},
+		{
+			"create": 1,
+			"delete": 1,
+			"email": 1,
+			"export": 1,
+			"print": 1,
+			"read": 1,
+			"role": "HR Staff Officer",
+			"share": 1,
+			"write": 1
+		},
+		{
+			"read": 1,
+			"role": "Department Head"
+		},
+		{
+			"read": 1,
+			"role": "Employee Self Service"
+		}
+	],
+	"quick_entry": 1,
+	"sort_field": "modified",
+	"sort_order": "DESC",
+	"states": [],
+	"title_field": "employee_id",
+	"track_changes": 1
+}

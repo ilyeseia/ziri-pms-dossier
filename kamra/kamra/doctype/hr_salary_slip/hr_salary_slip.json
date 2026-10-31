@@ -1,0 +1,20 @@
+﻿{
+    "actions": [],
+    "allow_bulk_edit": 1,
+    "allow_rename": 1,
+    "autoname": "format:SALARY-{####}",
+    "creation": "2026-10-31 20:00:00.000000",
+    "doctype": "DocType",
+    "engine": "InnoDB",
+    "field_order": ["employee", "employee_name", "payroll_period", "status"],
+    "fields": [
+        {"fieldname": "employee", "fieldtype": "Link", "label": "Employé", "options": "HR Employee", "reqd": 1},
+        {"fieldname": "employee_name", "fieldtype": "Data", "label": "Nom", "read_only": 1},
+        {"fieldname": "payroll_period", "fieldtype": "Date", "label": "Période paie", "reqd": 1},
+        {"fieldname": "status", "fieldtype": "Select", "label": "Statut", "options": "Brouillon\nCalculé\nPayé", "default": "Brouillon"}
+    ],
+    "module": "Kamra",
+    "name": "HR Salary Slip",
+    "naming_rule": "Expression",
+    "title_field": "employee"
+}

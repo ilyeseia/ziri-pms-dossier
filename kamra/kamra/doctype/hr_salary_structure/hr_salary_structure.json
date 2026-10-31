@@ -1,0 +1,184 @@
+{
+	"actions": [],
+	"allow_bulk_edit": 1,
+	"allow_rename": 1,
+	"autoname": "field:name",
+	"creation": "2026-10-31 20:00:00.000000",
+	"doctype": "DocType",
+	"editable_grid": 1,
+	"engine": "InnoDB",
+	"field_order": [
+		"name",
+		"description",
+		"is_active",
+		"section_break_earnings",
+		"earnings",
+		"section_break_deductions",
+		"deductions",
+		"section_break_algeria",
+		"cnss_employer_rate",
+		"cnss_employee_rate",
+		"cnas_employer_rate",
+		"cnas_employee_rate",
+		"irg_method"
+	],
+	"fields": [
+		{
+			"fieldname": "name",
+			"fieldtype": "Data",
+			"label": "Nom structure",
+			"reqd": 1,
+			"unique": 1
+		},
+		{
+			"fieldname": "description",
+			"fieldtype": "Text",
+			"label": "Description"
+		},
+		{
+			"fieldname": "is_active",
+			"fieldtype": "Check",
+			"label": "Active",
+			"default": 1
+		},
+		{
+			"fieldname": "section_break_earnings",
+			"fieldtype": "Section Break",
+			"label": "Gains (Rubriques de paie)"
+		},
+		{
+			"fieldname": "earnings",
+			"fieldtype": "Table",
+			"label": "Gains",
+			"options": "HR Salary Component",
+			"fields": [
+				{
+					"fieldname": "component",
+					"fieldtype": "Data",
+					"label": "Rubrique",
+					"reqd": 1
+				},
+				{
+					"fieldname": "amount",
+					"fieldtype": "Currency",
+					"label": "Montant / Formule",
+					"reqd": 1
+				},
+				{
+					"fieldname": "condition",
+					"fieldtype": "Code",
+					"label": "Condition (Python)",
+					"options": "python"
+				},
+				{
+					"fieldname": "is_fixed",
+					"fieldtype": "Check",
+					"label": "Fixe",
+					"default": 1
+				}
+			]
+		},
+		{
+			"fieldname": "section_break_deductions",
+			"fieldtype": "Section Break",
+			"label": "Retenues"
+		},
+		{
+			"fieldname": "deductions",
+			"fieldtype": "Table",
+			"label": "Retenues",
+			"options": "HR Salary Component",
+			"fields": [
+				{
+					"fieldname": "component",
+					"fieldtype": "Data",
+					"label": "Rubrique",
+					"reqd": 1
+				},
+				{
+					"fieldname": "amount",
+					"fieldtype": "Currency",
+					"label": "Montant / Formule",
+					"reqd": 1
+				},
+				{
+					"fieldname": "condition",
+					"fieldtype": "Code",
+					"label": "Condition (Python)",
+					"options": "python"
+				},
+				{
+					"fieldname": "is_fixed",
+					"fieldtype": "Check",
+					"label": "Fixe",
+					"default": 1
+				}
+			]
+		},
+		{
+			"fieldname": "section_break_algeria",
+			"fieldtype": "Section Break",
+			"label": "Paramètres Cotisations Algérie"
+		},
+		{
+			"fieldname": "cnss_employer_rate",
+			"fieldtype": "Percent",
+			"label": "CNSS Patronal %",
+			"default": 26.0
+		},
+		{
+			"fieldname": "cnss_employee_rate",
+			"fieldtype": "Percent",
+			"label": "CNSS Salarial %",
+			"default": 9.0
+		},
+		{
+			"fieldname": "cnas_employer_rate",
+			"fieldtype": "Percent",
+			"label": "CNAS Patronal %",
+			"default": 1.5
+		},
+		{
+			"fieldname": "cnas_employee_rate",
+			"fieldtype": "Percent",
+			"label": "CNAS Salarial %",
+			"default": 0.5
+		},
+		{
+			"fieldname": "irg_method",
+			"fieldtype": "Select",
+			"label": "Méthode IRG",
+			"options": "Tranches 2024\nForfaitaire\nExonéré",
+			"default": "Tranches 2024"
+		}
+	],
+	"index_web_pages_for_search": 1,
+	"links": [],
+	"modified": "2026-10-31 20:00:00.000000",
+	"modified_by": "Administrator",
+	"module": "Kamra",
+	"name": "HR Salary Structure",
+	"naming_rule": "By fieldname",
+	"owner": "Administrator",
+	"permissions": [
+		{
+			"create": 1,
+			"delete": 1,
+			"email": 1,
+			"export": 1,
+			"print": 1,
+			"read": 1,
+			"role": "HR Manager",
+			"share": 1,
+			"write": 1
+		},
+		{
+			"read": 1,
+			"role": "HR Payroll Officer"
+		}
+	],
+	"quick_entry": 1,
+	"sort_field": "modified",
+	"sort_order": "DESC",
+	"title_field": "name"
+}

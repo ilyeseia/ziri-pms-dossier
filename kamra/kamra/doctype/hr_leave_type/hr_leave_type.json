@@ -1,0 +1,103 @@
+{
+	"actions": [],
+	"allow_bulk_edit": 1,
+	"allow_rename": 1,
+	"autoname": "field:leave_type_name",
+	"creation": "2026-10-31 20:00:00.000000",
+	"doctype": "DocType",
+	"editable_grid": 1,
+	"engine": "InnoDB",
+	"field_order": [
+		"leave_type_name",
+		"description",
+		"max_days",
+		"is_carry_forward",
+		"carry_forward_limit",
+		"requires_approval",
+		"approval_workflow",
+		"is_paid",
+		"color"
+	],
+	"fields": [
+		{
+			"fieldname": "leave_type_name",
+			"fieldtype": "Data",
+			"label": "Type de congé",
+			"reqd": 1,
+			"unique": 1
+		},
+		{
+			"fieldname": "description",
+			"fieldtype": "Text",
+			"label": "Description"
+		},
+		{
+			"fieldname": "max_days",
+			"fieldtype": "Int",
+			"label": "Jours max/an",
+			"default": 30
+		},
+		{
+			"fieldname": "is_carry_forward",
+			"fieldtype": "Check",
+			"label": "Report autorisé",
+			"default": 1
+		},
+		{
+			"fieldname": "carry_forward_limit",
+			"fieldtype": "Int",
+			"label": "Limite report (jours)",
+			"default": 15
+		},
+		{
+			"fieldname": "requires_approval",
+			"fieldtype": "Check",
+			"label": "Validation requise",
+			"default": 1
+		},
+		{
+			"fieldname": "approval_workflow",
+			"fieldtype": "Select",
+			"label": "Workflow validation",
+			"options": "Manager puis RH\nRH uniquement\nAutomatique",
+			"default": "Manager puis RH"
+		},
+		{
+			"fieldname": "is_paid",
+			"fieldtype": "Check",
+			"label": "Congé payé",
+			"default": 1
+		},
+		{
+			"fieldname": "color",
+			"fieldtype": "Color",
+			"label": "Couleur calendrier",
+			"default": "#3498db"
+		}
+	],
+	"index_web_pages_for_search": 1,
+	"links": [],
+	"modified": "2026-10-31 20:00:00.000000",
+	"modified_by": "Administrator",
+	"module": "Kamra",
+	"name": "HR Leave Type",
+	"naming_rule": "By fieldname",
+	"owner": "Administrator",
+	"permissions": [
+		{
+			"create": 1,
+			"delete": 1,
+			"email": 1,
+			"export": 1,
+			"print": 1,
+			"read": 1,
+			"role": "HR Manager",
+			"share": 1,
+			"write": 1
+		}
+	],
+	"quick_entry": 1,
+	"sort_field": "modified",
+	"sort_order": "DESC",
+	"title_field": "leave_type_name"
+}
