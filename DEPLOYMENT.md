@@ -185,6 +185,55 @@ bench restart
 
 ---
 
+## 🔁 Updating an existing Docker install (verified)
+
+This is the procedure used for the live ZIRI PMS server. It keeps the site's
+existing app tree and only replaces the code that changed.
+
+```bash
+# 1. Take a backup first (database + files)
+cd deploy/linux
+docker compose exec -T backend bench --site <site-name> backup --with-files
+
+# 2. Put the updated app code in place
+#    (kamra/kamra/hr, the HR doctypes, and any other changed files)
+
+# 3. Build a new image on top of the running one
+#    Dockerfile:
+#      FROM kamra:<current-tag>
+#      USER root
+#      RUN rm -rf .../apps/kamra/kamra .../apps/kamra/frontend
+#      COPY kamra  .../apps/kamra/kamra
+#      COPY frontend .../apps/kamra/frontend
+#      USER frappe
+#      RUN ./env/bin/pip install -e ./apps/kamra --no-deps
+docker build -t kamra:<new-tag> -f Dockerfile .
+
+# 4. Point the stack at the new image and recreate the services
+sed -i 's/^CUSTOM_TAG=.*/CUSTOM_TAG=<new-tag>/' .env
+docker compose up -d
+
+# 5. Apply schema changes (new DocTypes, patches)
+docker compose exec -T backend bench --site <site-name> migrate
+
+# 6. Verify
+curl -s https://<public-host>/api/method/ping   # {"message":"pong"}
+```
+
+Notes:
+
+- `migrate` must run **after** `docker compose up -d`; it syncs the new
+  DocTypes into the database.
+- Verify a new whitelisted method exists by calling it unauthenticated: a
+  `403 PermissionError` means the method is loaded, a `404` means it is not.
+- HR DocTypes are available in Desk under `/app/hr-employee`,
+  `/app/hr-attendance`, `/app/hr-leave-application`, `/app/hr-salary-slip`,
+  `/app/department` and `/app/designation`.
+- Keep `CUSTOM_TAG` history: if a migration fails, point it back at the
+  previous tag and run `docker compose up -d` (see the rollback note above).
+
+---
+
 ## 🛠️ Development
 
 ### Frontend Development
