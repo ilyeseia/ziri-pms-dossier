@@ -1,0 +1,222 @@
+{
+	"actions": [],
+	"allow_bulk_edit": 1,
+	"allow_rename": 1,
+	"autoname": "format:CTR-{####}",
+	"creation": "2026-10-31 20:00:00.000000",
+	"doctype": "DocType",
+	"editable_grid": 1,
+	"engine": "InnoDB",
+	"field_order": [
+		"employee",
+		"employee_name",
+		"column_break_1",
+		"contract_type",
+		"status",
+		"section_break_dates",
+		"start_date",
+		"end_date",
+		"section_break_compensation",
+		"salary_base",
+		"salary_gross",
+		"salary_currency",
+		"working_hours_weekly",
+		"coefficient",
+		"section_break_terms",
+		"trial_period_days",
+		"notice_period_days",
+		"renewal_terms",
+		"section_break_legal",
+		"cnss_category",
+		"cnas_category",
+		"irg_category",
+		"collective_agreement"
+	],
+	"fields": [
+		{
+			"fieldname": "employee",
+			"fieldtype": "Link",
+			"label": "Employé",
+			"options": "HR Employee",
+			"reqd": 1,
+			"in_list_view": 1
+		},
+		{
+			"fieldname": "employee_name",
+			"fieldtype": "Data",
+			"label": "Nom employé",
+			"read_only": 1,
+			"fetch_from": "employee.employee_name"
+		},
+		{
+			"fieldname": "column_break_1",
+			"fieldtype": "Column Break"
+		},
+		{
+			"fieldname": "contract_type",
+			"fieldtype": "Select",
+			"label": "Type de contrat",
+			"options": "CDI\nCDD\nSaisonnier\nStage\nIntérim\nApprentissage",
+			"default": "CDI",
+			"reqd": 1,
+			"in_list_view": 1
+		},
+		{
+			"fieldname": "status",
+			"fieldtype": "Select",
+			"label": "Statut",
+			"options": "Brouillon\nActif\nExpiré\nRésilié\nRenouvelé",
+			"default": "Brouillon",
+			"in_list_view": 1
+		},
+		{
+			"fieldname": "section_break_dates",
+			"fieldtype": "Section Break",
+			"label": "Période"
+		},
+		{
+			"fieldname": "start_date",
+			"fieldtype": "Date",
+			"label": "Date début",
+			"reqd": 1
+		},
+		{
+			"fieldname": "end_date",
+			"fieldtype": "Date",
+			"label": "Date fin"
+		},
+		{
+			"fieldname": "section_break_compensation",
+			"fieldtype": "Section Break",
+			"label": "Rémunération"
+		},
+		{
+			"fieldname": "salary_base",
+			"fieldtype": "Currency",
+			"label": "Salaire de base",
+			"options": "salary_currency",
+			"reqd": 1
+		},
+		{
+			"fieldname": "salary_gross",
+			"fieldtype": "Currency",
+			"label": "Salaire brut mensuel",
+			"options": "salary_currency"
+		},
+		{
+			"fieldname": "salary_currency",
+			"fieldtype": "Link",
+			"label": "Devise",
+			"options": "Currency",
+			"default": "DZD"
+		},
+		{
+			"fieldname": "working_hours_weekly",
+			"fieldtype": "Float",
+			"label": "Heures/semaine",
+			"default": 40
+		},
+		{
+			"fieldname": "coefficient",
+			"fieldtype": "Float",
+			"label": "Coefficient",
+			"default": 1.0
+		},
+		{
+			"fieldname": "section_break_terms",
+			"fieldtype": "Section Break",
+			"label": "Conditions"
+		},
+		{
+			"fieldname": "trial_period_days",
+			"fieldtype": "Int",
+			"label": "Période essai (jours)",
+			"default": 90
+		},
+		{
+			"fieldname": "notice_period_days",
+			"fieldtype": "Int",
+			"label": "Préavis (jours)",
+			"default": 30
+		},
+		{
+			"fieldname": "renewal_terms",
+			"fieldtype": "Text",
+			"label": "Conditions renouvellement"
+		},
+		{
+			"fieldname": "section_break_legal",
+			"fieldtype": "Section Break",
+			"label": "Paramètres Légaux Algérie"
+		},
+		{
+			"fieldname": "cnss_category",
+			"fieldtype": "Select",
+			"label": "Catégorie CNSS",
+			"options": "Cadre\nNon-cadre\nApprenti\nSaisonnier",
+			"default": "Non-cadre"
+		},
+		{
+			"fieldname": "cnas_category",
+			"fieldtype": "Select",
+			"label": "Catégorie CNAS",
+			"options": "Général\nAgricole\nNon-salarié",
+			"default": "Général"
+		},
+		{
+			"fieldname": "irg_category",
+			"fieldtype": "Select",
+			"label": "Catégorie IRG",
+			"options": "Célibataire\nMarié 1 enfant\nMarié 2 enfants\nMarié 3+ enfants",
+			"default": "Célibataire"
+		},
+		{
+			"fieldname": "collective_agreement",
+			"fieldtype": "Data",
+			"label": "Convention collective",
+			"default": "Hôtellerie/Restauration"
+		}
+	],
+	"index_web_pages_for_search": 1,
+	"links": [],
+	"modified": "2026-10-31 20:00:00.000000",
+	"modified_by": "Administrator",
+	"module": "Kamra",
+	"name": "HR Contract",
+	"naming_rule": "Expression",
+	"owner": "Administrator",
+	"permissions": [
+		{
+			"create": 1,
+			"delete": 1,
+			"email": 1,
+			"export": 1,
+			"print": 1,
+			"read": 1,
+			"role": "HR Manager",
+			"share": 1,
+			"write": 1
+		},
+		{
+			"create": 1,
+			"delete": 1,
+			"email": 1,
+			"export": 1,
+			"print": 1,
+			"read": 1,
+			"role": "HR Staff Officer",
+			"share": 1,
+			"write": 1
+		},
+		{
+			"read": 1,
+			"role": "Employee Self Service"
+		}
+	],
+	"quick_entry": 1,
+	"sort_field": "modified",
+	"sort_order": "DESC",
+	"states": [],
+	"title_field": "employee",
+	"track_changes": 1
+}
