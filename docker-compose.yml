@@ -1,0 +1,85 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: frappe
+      POSTGRES_PASSWORD: frappe123
+      POSTGRES_DB: frappe
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - frappe-network
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    networks:
+      - frappe-network
+
+  # Redis Queue
+  redis-queue:
+    image: redis:7-alpine
+    ports:
+      - "6380:6379"
+    networks:
+      - frappe-network
+
+  # Frappe Backend
+  frappe:
+    image: frappe/erpnext-worker:v15
+    depends_on:
+      - postgres
+      - redis
+      - redis-queue
+    environment:
+      - DB_HOST=postgres
+      - DB_USER=frappe
+      - DB_PASSWORD=frappe123
+      - DB_NAME=frappe
+      - REDIS_CACHE=redis
+      - REDIS_QUEUE=redis-queue
+      - FRAPPE_SITE_NAME=ziri.local
+    volumes:
+      - ./sites:/home/frappe/frappe-bench/sites
+      - ./apps:/home/frappe/frappe-bench/apps
+      - ./kamra:/home/frappe/frappe-bench/apps/kamra
+    ports:
+      - "8000:8000"
+      - "9000:9000"
+    command: >
+      bash -c "
+        bench setup production frappe &&
+        bench --site ziri.local install-app kamra &&
+        bench --site ziri.local migrate &&
+        bench start
+      "
+    networks:
+      - frappe-network
+
+  # Nginx Reverse Proxy
+  nginx:
+    image: nginx:alpine
+    depends_on:
+      - frappe
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./sites:/usr/share/nginx/html
+    networks:
+      - frappe-network
+
+volumes:
+  postgres_data:
+
+networks:
+  frappe-network:
+    driver: bridge
