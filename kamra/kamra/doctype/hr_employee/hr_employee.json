@@ -11,6 +11,7 @@
 		"employee_id",
 		"first_name",
 		"last_name",
+		"employee_name",
 		"column_break_1",
 		"email",
 		"phone",
@@ -69,6 +70,13 @@
 			"label": "Nom",
 			"reqd": 1,
 			"in_list_view": 1
+		},
+		{
+			"fieldname": "employee_name",
+			"fieldtype": "Data",
+			"label": "Nom complet",
+			"in_list_view": 1,
+			"read_only": 1
 		},
 		{
 			"fieldname": "column_break_1",

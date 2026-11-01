@@ -281,6 +281,44 @@ def export_cnas_declaration(period: str) -> Dict[str, Any]:
 
 
 @frappe.whitelist()
+def get_salary_slips(period: str, page: int = 1, page_size: int = 50) -> Dict[str, Any]:
+    """Liste paginée des bulletins pour une période"""
+    from frappe.utils import get_first_day, get_last_day
+    period_start = _period_start(period)
+    
+    filters = {"payroll_period": period_start}
+    
+    total = frappe.db.count("HR Salary Slip", filters)
+    
+    slips = frappe.get_all("HR Salary Slip",
+        filters=filters,
+        fields=["name", "employee", "employee_name", "department", "payroll_period",
+                "status", "gross_salary", "cnss_employee", "cnas_employee", "irg",
+                "net_salary", "cnss_employer", "cnas_employer", "total_employer_cost",
+                "days_worked", "overtime_hours", "overtime_amount", "total_deductions", "payment_date"],
+        order_by="employee",
+        limit=page_size,
+        start=(page - 1) * page_size)
+    
+    return {"data": slips, "total": total, "page": page, "page_size": page_size}
+
+
+@frappe.whitelist()
+def mark_payslip_paid(payslip_id: str) -> Dict[str, Any]:
+    """Marquer un bulletin comme Payé"""
+    slip = frappe.get_doc("HR Salary Slip", payslip_id)
+    
+    if slip.status not in ["Vérifié", "Approuvé"]:
+        frappe.throw(_("Seuls les bulletins 'Vérifié' ou 'Approuvé' peuvent être marqués payés"))
+    
+    slip.status = "Payé"
+    slip.payment_date = nowdate()
+    slip.save(ignore_permissions=True)
+    
+    return {"name": slip.name, "status": slip.status, "payment_date": str(slip.payment_date)}
+
+
+@frappe.whitelist()
 def get_employee_payslips(employee: str, year: int = None) -> List[Dict]:
     """Historique bulletins employé"""
     filters = {"employee": employee}

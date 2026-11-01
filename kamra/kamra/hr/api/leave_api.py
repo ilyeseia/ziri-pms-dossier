@@ -16,7 +16,6 @@ from typing import Any, Dict, List
 def get_leave_types() -> List[Dict]:
     """Types de congés disponibles"""
     return frappe.get_all("HR Leave Type",
-        filters={"is_active": 1},
         fields=["name", "leave_type_name", "max_days", "is_carry_forward", "carry_forward_limit", "is_paid", "color"])
 
 
@@ -25,14 +24,14 @@ def get_leave_balance(employee: str, leave_type: str = None) -> Dict[str, Any]:
     """Solde congés pour un employé"""
     from frappe.utils import flt
     
-    filters = {"employee": employee, "status": "Approuvé", "docstatus": 1}
+    filters = {"employee": employee, "status": "Approuvé"}
     if leave_type:
         filters["leave_type"] = leave_type
-    
+
     taken = frappe.db.sql("""
         SELECT leave_type, COALESCE(SUM(total_days), 0) as total
         FROM `tabHR Leave Application`
-        WHERE employee = %(employee)s AND status = 'Approuvé' AND docstatus = 1
+        WHERE employee = %(employee)s AND status = 'Approuvé'
         GROUP BY leave_type
     """, {"employee": employee}, as_dict=True)
     
